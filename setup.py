@@ -3,10 +3,10 @@
 from distutils.core import setup
 
 setup(name='simplemailer',
-      version='1.0',
+      version='1.0.1',
       description='Simple wrapper for Python (SMTP) mail using Jinja2 templates',
       author='Chris',
-      url='https://github.com/chris-ca/simplemail',
-      py_modules=['mailer']
+      url='https://github.com/chris-ca/simplemailer',
+      py_modules=['simplemailer']
 )
 
