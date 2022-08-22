@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-setup(name='simplemail',
+setup(name='simplemailer',
       version='1.0',
       description='Simple wrapper for Python (SMTP) mail using Jinja2 templates',
       author='Chris',
