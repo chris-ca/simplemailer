@@ -4,6 +4,8 @@ from pathlib import Path
 import smtplib
 import datetime
 import logging
+import sys
+import argparse
 
 from email import encoders
 from email.mime.text import MIMEText
@@ -135,6 +137,10 @@ to             = Recipient <recipient@example.com>"""
         self.setBody('text', s)
         return self
 
+    def html(self, s):
+        self.setBody('html', s)
+        return self
+
     def to(self, s):
         self.setTo(s)
         return self
@@ -187,3 +193,20 @@ to             = Recipient <recipient@example.com>"""
             pass
 
         self._send_email(msg)
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description=''' Send Email via SMTP server''')
+    parser.add_argument('-s',  required=False, default="No subject", help='Subject')
+    args = parser.parse_args()
+    message = sys.stdin.read()
+
+    SimpleSMTP.from_config() \
+    .subject(args.s) \
+    .text(message) \
+    .send()
+
+
+
+
