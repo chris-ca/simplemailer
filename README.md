@@ -4,6 +4,15 @@
 
 ## Configuration
 - For configuration per user, create `$HOME/.config/simplemailer/config.ini` with credentials
+```
+[DEFAULT]
+port           = 587
+host           = mail.example.com
+smtp_user      = authuser@example.com
+smtp_password  = hunter2
+from           = Program mailer <mailer@example.com>
+to             = Recipient <user@example.com>
+```
 
 ## Usage
 ### Within Python programs
