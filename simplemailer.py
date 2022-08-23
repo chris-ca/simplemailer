@@ -204,7 +204,7 @@ if __name__ == '__main__':
 
     SimpleSMTP.from_config() \
     .subject(args.s) \
-    .text(message) \
+    .html(message) \
     .send()
 
 
