@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
+from os.path import expanduser
+from pathlib import Path
 import smtplib
 import datetime
+import logging
 
 from email import encoders
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 import jinja2
+import configparser
 
 class SendMailError(Exception):
     pass
@@ -16,6 +20,43 @@ class ConfigError(Exception):
 
 class SimpleSMTP:
     subject = '[no subject]'
+    
+    @classmethod
+    def from_config(cls, app_name='DEFAULT'):
+        """ read config from config.ini in $HOME/.config
+            Returns:
+                instance of SimpleSMTP
+        """
+        config = configparser.ConfigParser()
+        if not config.read(cls.get_config_file()):
+            config_file = cls.create_default_config()
+            raise ConfigError(f"Config file not found. New file created at '{config_file}', please edit")
+
+        if not app_name in config:
+            raise ConfigError(f'Section "{app_name}" not found in mailer configuration')
+        return cls(config[app_name])
+
+    @classmethod
+    def create_default_config(cls):
+        """ create empty config file """
+        path = cls.get_config_file()
+        contents = """[DEFAULT]
+port           = 587
+host           = mail.example.com
+smtp_user      = email_login@example.com
+smtp_password  = hunter2
+from           = My Mailer <mymailer@example.com>
+to             = Recipient <recipient@example.com>"""
+
+        with open(path, 'w') as f:
+            f.write(contents) 
+        return path
+
+    def get_config_file():
+        """ Return path to user config file """
+        config_dir  = expanduser("~")+'/.config/simplemailer'
+        Path(config_dir).mkdir(parents=True, exist_ok=True)
+        return config_dir + '/config.ini'
 
     def __init__(self, config):
         self.bodies = {}
@@ -86,6 +127,22 @@ class SimpleSMTP:
     def setHtmlBody(self, s, **kwargs):
         self.setBody('html', s, **kwargs)
 
+    def subject(self, s):
+        self.subject = s
+        return self
+
+    def text(self, s):
+        self.setBody('text', s)
+        return self
+
+    def to(self, s):
+        self.setTo(s)
+        return self
+
+    def from_(self, s):
+        self.setFrom(s)
+        return self
+
     @property
     def textBody(self):
         return self.bodies['text']
@@ -110,7 +167,7 @@ class SimpleSMTP:
         except Exception as e:
             raise SendMailError('Error while sending email: '+str(e)) from e
              
-    def send(self):
+    def send(self, **kwargs):
         """ validate inputs and send email """
         if self.From is None or self.To is None:
             raise ConfigError('Invalid From/To')

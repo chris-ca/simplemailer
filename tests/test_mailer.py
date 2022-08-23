@@ -46,7 +46,9 @@ def test_invalid_config():
     with pytest.raises(simplemailer.ConfigError):
         mailer = simplemailer.SimpleSMTP({'host':'asf'})
 
-#@pytest.mark.skip()
-def test_send(mailer):
-    mailer.setTextBody('This email body contains no {substitutions} at all')
-    mailer.send() 
+def test_send_quick_email_from_appconfig():
+    simplemailer.SimpleSMTP.from_config() \
+    .subject('ehlo this is a test') \
+    .text('This email body contains no {substitutions} at all') \
+    .send()
+
