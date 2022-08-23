@@ -19,7 +19,7 @@ setup(name='simplemailer',
         'console_scripts': [
             'simplemailer = simplemailer'
         ]
-    }
+    },
     url='https://github.com/chris-ca/simplemailer',
     py_modules=['simplemailer']
 )
